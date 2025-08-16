@@ -1,20 +1,21 @@
-# Basisimage
+# base image
 FROM python:3.12-slim
 
-# Arbeitsverzeichnis
+# set workdir
 WORKDIR /app
 
-# Abhängigkeiten kopieren
+# copy requirements
 COPY requirements.txt .
 
-# Abhängigkeiten installieren
+# install dependecies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Quellcode kopieren
-COPY exporter.py .
+# copy code
+COPY plenticore_exporter.py .
+COPY session_cache.py .
 
-# Port freigeben
-EXPOSE 8000
+# set port
+EXPOSE 8080
 
-# Container-Start
+# run exporter
 CMD ["python", "plenticore_exporter.py"]
