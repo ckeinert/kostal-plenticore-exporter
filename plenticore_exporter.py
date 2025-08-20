@@ -87,7 +87,7 @@ async def fetch_all_values(host, port, key, service_code):
 
     # command_main ist async, also await nutzen
     try:
-        return await command_main(host, port, key, service_code, some_fn)
+        return await command_main(host, port, key, service_code, fn)
     except (asyncio.TimeoutError, asyncio.CancelledError) as e:
         logger.warning(f"Inverter did not respond in time: {e}")
         return {}
