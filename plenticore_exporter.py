@@ -118,18 +118,22 @@ def sanitize_metric_name(value: str) -> str:
 
 
 async def update_metrics(host, port, key, service_code):
-    while not shutdown_event.is_set():
-        try:
-            data = await fetch_all_values(host, port, key, service_code)
-        except Exception as e:
-            logger.error(f"Fehler beim Abrufen der Metriken: {e}")
-            data = {}
+    shutdown_event = asyncio.Event()
 
-        for full_key, value in data.items():
-            if '/' in full_key:
-                metric_base, metric_type = full_key.rsplit('/', 1)
+    # Optional: Signale abfangen, um sauber zu stoppen
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        loop.add_signal_handler(sig, shutdown_event.set)
+
+    while not shutdown_event.is_set():
+        data = await fetch_all_values(host, port, key, service_code)
+
+        for key, value in data.items():
+            # Teile aufteilen
+            if '/' in key:
+                metric_base, metric_type = key.rsplit('/', 1)
             else:
-                metric_base, metric_type = full_key, "value"
+                metric_base, metric_type = key, "value"
 
             metric_name = sanitize_metric_name(metric_base.split(":")[-1])
             label_value = sanitize_label(metric_type)
@@ -138,9 +142,13 @@ async def update_metrics(host, port, key, service_code):
                 gauges[metric_name] = Gauge(metric_name, f"SCB metric {metric_base}", ["type"])
 
             gauges[metric_name].labels(type=label_value).set(value)
-            logger.debug(f"{metric_name}{{type={label_value}}} = {value}")
+            print(f"{metric_name}{{type={label_value}}} = {value}")
 
-        await asyncio.wait([shutdown_event.wait()], timeout=15)
+        # 15 Sekunden warten, aber auf Shutdown reagieren
+        try:
+            await asyncio.wait_for(shutdown_event.wait(), timeout=15)
+        except asyncio.TimeoutError:
+            pass  # Timeout = weitermachen
 
 
 async def main():
