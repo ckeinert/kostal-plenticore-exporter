@@ -1,5 +1,3 @@
 pykoplenti
-asyncio
-prometheus_client
-prompt_toolkit
 aiohttp
+prometheus_client
