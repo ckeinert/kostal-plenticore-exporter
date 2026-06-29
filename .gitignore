@@ -1,0 +1,24 @@
+# Bytecode / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Backup files
+*.bak
+*.swp
+*~
+
+# IDE / Editor artifacts
+.vscode/
+.idea/
+*.sublime-*
+
+# Environment variables (sensitive)
+.env
+.env.local
+
+# Generated docs
+*.egg-info/
+build/
+dist/

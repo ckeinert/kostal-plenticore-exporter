@@ -5,26 +5,64 @@ from typing import Union
 
 
 class SessionCache:
-    """Persistent the session in a temporary file."""
+    """Persistent session cache with atomic writes and cleanup."""
 
     def __init__(self, host: str, user: str):
-        self._cache_file = Path(
-            tempfile.gettempdir(), f"pykoplenti-session-{host}-{user}"
-        )
+        self._cache_dir = Path(tempfile.gettempdir())
+        self._cache_file = self._cache_dir / f"pykoplenti-session-{host}-{user}"
+        # Ensure cache directory exists with proper permissions
+        self._cache_dir.mkdir(parents=True, exist_ok=True)
 
     def read_session_id(self) -> Union[str, None]:
+        """Read cached session ID atomically."""
         if self._cache_file.is_file():
-            with self._cache_file.open("rt") as f:
-                return f.readline(256)
+            try:
+                return self._cache_file.read_text(encoding="ascii", max_bytes=256).strip()
+            except (OSError, UnicodeDecodeError):
+                # File corrupted or unreadable - clean up and return None
+                self.remove()
+                return None
         else:
             return None
 
-    def write_session_id(self, id: str):
-        f = os.open(self._cache_file, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode=0o600)
+    def write_session_id(self, id: str) -> None:
+        """Write session ID atomically using temp file + rename."""
+        fd, tmp_path = tempfile.mkstemp(
+            dir=self._cache_dir, prefix=f"pykoplenti-session-{self._cache_file.stem}-."
+        )
         try:
-            os.write(f, id.encode("ascii"))
-        finally:
-            os.close(f)
+            os.write(fd, id.encode("ascii"))
+            os.fsync(fd)  # Ensure data is written to disk
+            os.close(fd)
 
-    def remove(self):
+            # Atomic rename - this also sets permissions correctly
+            self._cache_file.rename(tmp_path)
+        except (OSError, IOError):
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
+
+    def remove(self) -> None:
+        """Remove session cache file."""
         self._cache_file.unlink(missing_ok=True)
+
+
+def cleanup_stale_sessions() -> int:
+    """Clean up stale session files (older than 1 hour). Returns count removed."""
+    import time
+    from datetime import timedelta
+
+    cutoff = time.time() - timedelta(hours=1).total_seconds()
+    removed = 0
+
+    for f in self._cache_dir.glob("pykoplenti-session-*"):
+        if f.stat().st_mtime < cutoff:
+            try:
+                f.unlink()
+                removed += 1
+            except OSError:
+                pass
+
+    return removed

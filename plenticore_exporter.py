@@ -6,11 +6,13 @@ import os
 import math
 import logging
 from aiohttp import ClientSession, ClientTimeout
+from aiohttp import web
 from pykoplenti import ApiClient
 from typing import Optional, Any, Callable, Awaitable, Dict
 from session_cache import SessionCache
 from collections import defaultdict
 from prometheus_client import start_http_server, Gauge
+from gauges import ThreadSafeGauges
 
 # Logger konfigurieren
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -26,7 +28,48 @@ if not host or not key:
 
 # Signal-Event für Graceful Shutdown
 shutdown_event = asyncio.Event()
-gauges: Dict[str, Gauge] = {}
+
+# Inverter Status Codes (from Kostal documentation)
+INVERTER_STATUS_CODES = {
+    0: "off",
+    1: "init",
+    2: "isomeas",
+    3: "gridcheck",
+    4: "startup",
+    5: "-",
+    6: "feedin",
+    7: "throttled",
+    8: "extswitchoff",
+    9: "update",
+    10: "standby",
+    11: "gridsync",
+    12: "gridprecheck",
+    13: "gridswitchoff",
+    14: "overheating",
+    15: "shutdown",
+    16: "improperdcvoltage",
+    17: "esb",
+    18: "unknown",
+}
+
+BATTERY_STATUS_CODES = {
+    0: "idle",
+    1: "na",
+    2: "emergency_battery_charge",
+    4: "na",
+    8: "winter_mode_1",
+    16: "winter_mode_2",
+}
+
+
+def decode_inverter_status(value: int) -> str:
+    """Convert numeric inverter status to human-readable string."""
+    return INVERTER_STATUS_CODES.get(int(value), f"unknown_{value}")
+
+
+def decode_battery_status(value: int) -> str:
+    """Convert numeric battery status to human-readable string."""
+    return BATTERY_STATUS_CODES.get(int(value), f"unknown_{value}")
 
 
 def graceful_exit(signum, frame):
@@ -93,6 +136,17 @@ async def fetch_all_values(host, port, key, service_code) -> Dict[str, float]:
                 entry_id = getattr(entry, "id", "unknown")
                 result[f"{module_id}/{entry_id}"] = value
 
+        # Add inverter status metrics (always present)
+        try:
+            me = await client.get_me()
+            if me.is_authenticated:
+                inv_status = decode_inverter_status(me.inverter_status)
+                bat_status = decode_battery_status(me.battery_manager.status)
+                result["inverter/status"] = float(inv_status)
+                result["battery/status"] = float(bat_status)
+        except Exception as e:
+            logger.error(f"Fehler beim Abrufen Statusdaten: {e}")
+
         return result
 
     try:
@@ -125,44 +179,97 @@ async def update_metrics(host, port, key, service_code):
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, shutdown_event.set)
 
-    while not shutdown_event.is_set():
-        data = await fetch_all_values(host, port, key, service_code)
+    gauges = ThreadSafeGauges()
 
-        for key, value in data.items():
-            # Teile aufteilen
-            if '/' in key:
-                metric_base, metric_type = key.rsplit('/', 1)
-            else:
-                metric_base, metric_type = key, "value"
+    try:
+        while not shutdown_event.is_set():
+            data = await fetch_all_values(host, port, key, service_code)
 
-            metric_name = sanitize_metric_name(metric_base.split(":")[-1])
-            label_value = sanitize_label(metric_type)
+            for key, value in data.items():
+                # Teile aufteilen
+                if '/' in key:
+                    metric_base, metric_type = key.rsplit('/', 1)
+                else:
+                    metric_base, metric_type = key, "value"
 
-            if metric_name not in gauges:
-                gauges[metric_name] = Gauge(metric_name, f"SCB metric {metric_base}", ["type"])
+                metric_name = sanitize_metric_name(metric_base.split(":")[-1])
+                label_value = sanitize_label(metric_type)
 
-            gauges[metric_name].labels(type=label_value).set(value)
-            print(f"{metric_name}{{type={label_value}}} = {value}")
+                gauges.get_or_create(
+                    metric_name, f"SCB metric {metric_base}", ["type"]
+                ).labels([label_value]).set(value)
+                print(f"{metric_name}{{type={label_value}}} = {value}")
 
-        # 15 Sekunden warten, aber auf Shutdown reagieren
-        try:
-            await asyncio.wait_for(shutdown_event.wait(), timeout=15)
-        except asyncio.TimeoutError:
-            pass  # Timeout = weitermachen
+            # 15 Sekunden warten, aber auf Shutdown reagieren
+            try:
+                await asyncio.wait_for(shutdown_event.wait(), timeout=15)
+            except asyncio.TimeoutError:
+                pass  # Timeout = weitermachen
+    finally:
+        gauges.cleanup()
 
 
 async def main():
-    start_http_server(8080)
-    logger.info("Exporter running on :8080")
-    await update_metrics(host, port, key, service_code)
+    port = int(os.getenv("PLENTICORE_EXPORTER_PORT", 8080))
+    start_http_server(port)
+    logger.info(f"Exporter running on :{port}")
+
+    app = web.Application()
+    app.router.add_get("/metrics", lambda r: web.Response(
+        text=start_http_server.__globals__["generate_latest"](), content_type="text/plain; charset=utf-8"))
+    app.router.add_get("/healthz", health_handler)
+    app.router.add_get("/ready", health_handler)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+
+    logger.info("Exporter serving requests")
+    await shutdown_event.wait()
+
+
+async def health_handler(request):
+    """Simple health check endpoint."""
+    return web.Response(text="OK", status=200)
+
+
+def parse_args():
+    """Parse command-line arguments."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description="Kostal Plenticore Prometheus Exporter"
+    )
+    parser.add_argument(
+        "host", type=str, help="Inverter IP address (required)"
+    )
+    parser.add_argument(
+        "--port", "-p", type=int, default=8080,
+        help="HTTP port for metrics endpoint (default: 8080)"
+    )
+    parser.add_argument(
+        "--key", "-k", type=str, default=None,
+        help="Login key for authentication"
+    )
+    parser.add_argument(
+        "--service-code", "-s", type=str, default=None,
+        help="Service code (e.g., 'master' or 'user')"
+    )
+    
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    port = 80
-    service_code = None
-
+    args = parse_args()
+    
+    # Override environment variables with CLI arguments if provided
+    port = int(os.getenv("PLENTICORE_EXPORTER_PORT", args.port))
+    key = os.getenv("PLENTICORE_PASSWORD") or args.key
+    
     try:
         asyncio.run(main())
-    except RuntimeError:  # z.B. in Jupyter / VSCode
+    except KeyboardInterrupt:
+        logger.info("Received interrupt signal, shutting down...")
         loop = asyncio.get_event_loop()
         loop.create_task(main())
