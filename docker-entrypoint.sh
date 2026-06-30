@@ -5,6 +5,7 @@ set -e
 export PLENTICORE_HOST="${PLENTICORE_HOST:-}"
 export PLENTICORE_PASSWORD="${PLENTICORE_PASSWORD:-}"
 export PLENTICORE_EXPORTER_PORT="${PLENTICORE_EXPORTER_PORT:-8080}"
+export PYTHONUNBUFFERED="${PYTHONUNBUFFERED:-1}"
 
 if [ -z "$PLENTICORE_HOST" ] || [ -z "$PLENTICORE_PASSWORD" ]; then
     echo "Error: PLENTICORE_HOST and PLENTICORE_PASSWORD must be set" >&2
@@ -12,4 +13,4 @@ if [ -z "$PLENTICORE_HOST" ] || [ -z "$PLENTICORE_PASSWORD" ]; then
 fi
 
 # Run the exporter with proper signal handling for graceful shutdown
-exec python3 "${PYTHONUNBUFFERED:=1}" "$@"
+exec python3 "$@"
