@@ -153,17 +153,6 @@ async def fetch_all_values(host, port, key, service_code) -> Dict[str, float]:
                 entry_id = getattr(entry, "id", "unknown")
                 result[f"{module_id}/{entry_id}"] = value
 
-        # Add inverter status metrics (always present)
-        try:
-            me = await client.get_me()
-            if me.is_authenticated:
-                result["inverter/status"] = float(me.inverter_status)
-                bat_mgr = getattr(me, "battery_manager", None)
-                if bat_mgr is not None:
-                    result["battery/status"] = float(getattr(bat_mgr, "status", 0))
-        except Exception as e:
-            logger.error(f"Fehler beim Abrufen Statusdaten: {e}")
-
         return result
 
     try:
@@ -199,7 +188,7 @@ async def update_metrics(host, port, key, service_code):
                 else:
                     metric_base, metric_type = metric_key, "value"
 
-                metric_name = sanitize_metric_name(metric_base.split(":")[-1])
+                metric_name = sanitize_metric_name(metric_base)
                 label_value = sanitize_label(metric_type)
 
                 gauges.get_or_create(
@@ -245,6 +234,7 @@ async def main(host=None, port=None, key=None, service_code=None, inverter_port=
     logger.info("Exporter serving requests")
     asyncio.create_task(update_metrics(host, inverter_port, key, service_code))
     await shutdown_event.wait()
+    await runner.cleanup()
 
 
 async def health_handler(request):

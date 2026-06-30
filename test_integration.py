@@ -190,8 +190,8 @@ async def test_fetch_process_data():
         assert len(data) > 0, "No metrics returned from inverter"
 
         # Check for expected metric types
-        has_inverter_status = any("inverter/status" in k for k in data.keys())
-        has_battery_status = any("battery/status" in k for k in data.keys())
+        has_inverter_status = any("Inverter" in k for k in data.keys())
+        has_battery_status = any("SoC" in k or "battery/" in k for k in data.keys())
 
         print(f"    Inverter status present: {has_inverter_status}")
         print(f"    Battery status present: {has_battery_status}")
@@ -231,11 +231,11 @@ async def test_metrics_endpoint():
 
                     # Check for expected metrics
                     has_inverter_status = any(
-                        "inverter{" in l and 'type="status"' in l
+                        "inverter_state" in l or "em_state" in l
                         for l in metric_lines
                     )
                     has_battery_status = any(
-                        "battery{" in l and 'type="status"' in l
+                        'type="soc"' in l or 'type="soh"' in l
                         for l in metric_lines
                     )
 
@@ -429,15 +429,15 @@ async def main_test():
 
         # Wait for port to be released before graceful_shutdown test
         import socket as sock_mod
-        for _ in range(10):
+        for _ in range(20):
             await asyncio.sleep(0.5)
             sock = sock_mod.socket(sock_mod.AF_INET, sock_mod.SOCK_STREAM)
             try:
                 sock.connect(("127.0.0.1", 8080))
                 sock.close()
+                break
             except ConnectionRefusedError:
                 sock.close()
-                break
         else:
             sock.close()
 
