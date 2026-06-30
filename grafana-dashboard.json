@@ -331,7 +331,7 @@
         "y": 4
       },
       "id": 5,
-      "title": "CO\u2082 Saving Today",
+      "title": "CO₂ Saving Today",
       "type": "stat",
       "options": {
         "colorMode": "value",
@@ -354,7 +354,7 @@
             "uid": "Prometheus"
           },
           "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day}",
-          "legendFormat": "CO\u2082 (g)",
+          "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
       ]
@@ -460,10 +460,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1"
+                ]
+              }
             },
             "properties": [
               {
@@ -478,10 +481,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2"
+                ]
+              }
             },
             "properties": [
               {
@@ -496,10 +502,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3"
+                ]
+              }
             },
             "properties": [
               {
@@ -591,10 +600,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1"
+                ]
+              }
             },
             "properties": [
               {
@@ -609,10 +621,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2"
+                ]
+              }
             },
             "properties": [
               {
@@ -627,10 +642,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3"
+                ]
+              }
             },
             "properties": [
               {
@@ -722,10 +740,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Active P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Active P"
+                ]
+              }
             },
             "properties": [
               {
@@ -740,10 +761,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Reactive Q"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Reactive Q"
+                ]
+              }
             },
             "properties": [
               {
@@ -758,10 +782,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Apparent S"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Apparent S"
+                ]
+              }
             },
             "properties": [
               {
@@ -854,10 +881,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "CosPhi"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "CosPhi"
+                ]
+              }
             },
             "properties": [
               {
@@ -868,10 +898,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Frequency"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Frequency"
+                ]
+              }
             },
             "properties": [
               {
@@ -958,10 +991,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -972,10 +1008,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -986,10 +1025,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -1088,10 +1130,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Power"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Power"
+                ]
+              }
             },
             "properties": [
               {
@@ -1110,10 +1155,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Voltage"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Voltage"
+                ]
+              }
             },
             "properties": [
               {
@@ -1128,10 +1176,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Current"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Current"
+                ]
+              }
             },
             "properties": [
               {
@@ -1222,10 +1273,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Power"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Power"
+                ]
+              }
             },
             "properties": [
               {
@@ -1244,10 +1298,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Voltage"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Voltage"
+                ]
+              }
             },
             "properties": [
               {
@@ -1262,10 +1319,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Current"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Current"
+                ]
+              }
             },
             "properties": [
               {
@@ -1611,10 +1671,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Power"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Power"
+                ]
+              }
             },
             "properties": [
               {
@@ -1625,10 +1688,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Voltage"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Voltage"
+                ]
+              }
             },
             "properties": [
               {
@@ -1643,10 +1709,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Current"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Current"
+                ]
+              }
             },
             "properties": [
               {
@@ -1750,10 +1819,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1"
+                ]
+              }
             },
             "properties": [
               {
@@ -1764,10 +1836,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2"
+                ]
+              }
             },
             "properties": [
               {
@@ -1778,10 +1853,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3"
+                ]
+              }
             },
             "properties": [
               {
@@ -1869,10 +1947,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1"
+                ]
+              }
             },
             "properties": [
               {
@@ -1883,10 +1964,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2"
+                ]
+              }
             },
             "properties": [
               {
@@ -1897,10 +1981,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3"
+                ]
+              }
             },
             "properties": [
               {
@@ -1988,10 +2075,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L1 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L1 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -2002,10 +2092,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L2 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L2 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -2016,10 +2109,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "L3 P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "L3 P"
+                ]
+              }
             },
             "properties": [
               {
@@ -2107,10 +2203,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Exported"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Exported"
+                ]
+              }
             },
             "properties": [
               {
@@ -2121,10 +2220,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Imported"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Imported"
+                ]
+              }
             },
             "properties": [
               {
@@ -2202,10 +2304,13 @@
         "overrides": [
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Active P"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Active P"
+                ]
+              }
             },
             "properties": [
               {
@@ -2216,10 +2321,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Reactive Q"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Reactive Q"
+                ]
+              }
             },
             "properties": [
               {
@@ -2234,10 +2342,13 @@
           },
           {
             "matcher": {
-              "type": "names",
-              "values": [
-                "Apparent S"
-              ]
+              "id": "byNames",
+              "options": {
+                "mode": "exact",
+                "names": [
+                  "Apparent S"
+                ]
+              }
             },
             "properties": [
               {
@@ -2863,7 +2974,7 @@
         "y": 105
       },
       "id": 32,
-      "title": "CO\u2082 Saving Today",
+      "title": "CO₂ Saving Today",
       "type": "stat",
       "options": {
         "colorMode": "value",
@@ -2886,7 +2997,7 @@
             "uid": "Prometheus"
           },
           "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day}",
-          "legendFormat": "CO\u2082 (g)",
+          "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
       ]
@@ -2925,7 +3036,7 @@
         "y": 105
       },
       "id": 33,
-      "title": "CO\u2082 Saving Month",
+      "title": "CO₂ Saving Month",
       "type": "stat",
       "options": {
         "colorMode": "value",
@@ -2948,7 +3059,7 @@
             "uid": "Prometheus"
           },
           "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Month}",
-          "legendFormat": "CO\u2082 (g)",
+          "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
       ]
@@ -2987,7 +3098,7 @@
         "y": 105
       },
       "id": 34,
-      "title": "CO\u2082 Saving Year",
+      "title": "CO₂ Saving Year",
       "type": "stat",
       "options": {
         "colorMode": "value",
@@ -3010,7 +3121,7 @@
             "uid": "Prometheus"
           },
           "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Year}",
-          "legendFormat": "CO\u2082 (g)",
+          "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
       ]
@@ -3049,7 +3160,7 @@
         "y": 105
       },
       "id": 35,
-      "title": "CO\u2082 Saving Total",
+      "title": "CO₂ Saving Total",
       "type": "stat",
       "options": {
         "colorMode": "value",
@@ -3072,7 +3183,7 @@
             "uid": "Prometheus"
           },
           "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Total}",
-          "legendFormat": "CO\u2082 (g)",
+          "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
       ]
@@ -3656,7 +3767,7 @@
             "uid": "Prometheus"
           },
           "expr": "devices_local{type=\"Iso_R}",
-          "legendFormat": "Iso R (\u03a9)",
+          "legendFormat": "Iso R (Ω)",
           "refId": "A"
         }
       ]
