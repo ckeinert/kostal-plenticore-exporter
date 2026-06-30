@@ -11,8 +11,11 @@ from pykoplenti import ApiClient
 from typing import Optional, Any, Callable, Awaitable, Dict
 from session_cache import SessionCache
 from collections import defaultdict
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import generate_latest, Gauge
 from gauges import ThreadSafeGauges
+
+# Global gauges instance shared between data collection and /metrics endpoint
+gauges = ThreadSafeGauges()
 
 # Logger konfigurieren
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -140,10 +143,10 @@ async def fetch_all_values(host, port, key, service_code) -> Dict[str, float]:
         try:
             me = await client.get_me()
             if me.is_authenticated:
-                inv_status = decode_inverter_status(me.inverter_status)
-                bat_status = decode_battery_status(me.battery_manager.status)
-                result["inverter/status"] = float(inv_status)
-                result["battery/status"] = float(bat_status)
+                result["inverter/status"] = float(me.inverter_status)
+                bat_mgr = getattr(me, "battery_manager", None)
+                if bat_mgr is not None:
+                    result["battery/status"] = float(getattr(bat_mgr, "status", 0))
         except Exception as e:
             logger.error(f"Fehler beim Abrufen Statusdaten: {e}")
 
@@ -172,25 +175,15 @@ def sanitize_metric_name(value: str) -> str:
 
 
 async def update_metrics(host, port, key, service_code):
-    shutdown_event = asyncio.Event()
-
-    # Optional: Signale abfangen, um sauber zu stoppen
-    loop = asyncio.get_running_loop()
-    for sig in (signal.SIGTERM, signal.SIGINT):
-        loop.add_signal_handler(sig, shutdown_event.set)
-
-    gauges = ThreadSafeGauges()
-
-    try:
-        while not shutdown_event.is_set():
+    while not shutdown_event.is_set():
+        try:
             data = await fetch_all_values(host, port, key, service_code)
 
-            for key, value in data.items():
-                # Teile aufteilen
-                if '/' in key:
-                    metric_base, metric_type = key.rsplit('/', 1)
+            for metric_key, value in data.items():
+                if '/' in metric_key:
+                    metric_base, metric_type = metric_key.rsplit('/', 1)
                 else:
-                    metric_base, metric_type = key, "value"
+                    metric_base, metric_type = metric_key, "value"
 
                 metric_name = sanitize_metric_name(metric_base.split(":")[-1])
                 label_value = sanitize_label(metric_type)
@@ -198,25 +191,33 @@ async def update_metrics(host, port, key, service_code):
                 gauges.get_or_create(
                     metric_name, f"SCB metric {metric_base}", ["type"]
                 ).labels([label_value]).set(value)
-                print(f"{metric_name}{{type={label_value}}} = {value}")
+                logger.info(f"{metric_name}{{type={label_value}}} = {value}")
+        except Exception as e:
+            logger.error(f"Error updating metrics: {e}")
 
-            # 15 Sekunden warten, aber auf Shutdown reagieren
-            try:
-                await asyncio.wait_for(shutdown_event.wait(), timeout=15)
-            except asyncio.TimeoutError:
-                pass  # Timeout = weitermachen
-    finally:
-        gauges.cleanup()
+        try:
+            await asyncio.wait_for(shutdown_event.wait(), timeout=15)
+        except asyncio.TimeoutError:
+            pass
 
 
-async def main():
-    port = int(os.getenv("PLENTICORE_EXPORTER_PORT", 8080))
-    start_http_server(port)
+async def main(host=None, port=None, key=None, service_code=None):
+    host = host or os.getenv("PLENTICORE_HOST")
+    if not host:
+        logger.error("PLENTICORE_HOST must be set or provided as argument!")
+        sys.exit(1)
+
+    port = port or int(os.getenv("PLENTICORE_EXPORTER_PORT", 8080))
+    key = key or os.getenv("PLENTICORE_PASSWORD")
+    if not key:
+        logger.error("PLENTICORE_PASSWORD must be set or provided as argument!")
+        sys.exit(1)
+
     logger.info(f"Exporter running on :{port}")
 
     app = web.Application()
     app.router.add_get("/metrics", lambda r: web.Response(
-        text=start_http_server.__globals__["generate_latest"](), content_type="text/plain; charset=utf-8"))
+        text=generate_latest().decode("utf-8"), content_type="text/plain"))
     app.router.add_get("/healthz", health_handler)
     app.router.add_get("/ready", health_handler)
 
@@ -226,6 +227,7 @@ async def main():
     await site.start()
 
     logger.info("Exporter serving requests")
+    asyncio.create_task(update_metrics(host, 443, key, service_code))
     await shutdown_event.wait()
 
 
@@ -242,7 +244,7 @@ def parse_args():
         description="Kostal Plenticore Prometheus Exporter"
     )
     parser.add_argument(
-        "host", type=str, help="Inverter IP address (required)"
+        "host", type=str, nargs="?", default=None, help="Inverter IP address (required or PLENTICORE_HOST env var)"
     )
     parser.add_argument(
         "--port", "-p", type=int, default=8080,
@@ -262,14 +264,10 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    
-    # Override environment variables with CLI arguments if provided
-    port = int(os.getenv("PLENTICORE_EXPORTER_PORT", args.port))
-    key = os.getenv("PLENTICORE_PASSWORD") or args.key
-    
+
     try:
-        asyncio.run(main())
+        asyncio.run(
+            main(args.host, args.port, args.key, args.service_code)
+        )
     except KeyboardInterrupt:
         logger.info("Received interrupt signal, shutting down...")
-        loop = asyncio.get_event_loop()
-        loop.create_task(main())

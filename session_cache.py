@@ -17,7 +17,8 @@ class SessionCache:
         """Read cached session ID atomically."""
         if self._cache_file.is_file():
             try:
-                return self._cache_file.read_text(encoding="ascii", max_bytes=256).strip()
+                with open(self._cache_file, "r", encoding="ascii") as f:
+                    return f.read(256).strip()
             except (OSError, UnicodeDecodeError):
                 # File corrupted or unreadable - clean up and return None
                 self.remove()
@@ -30,13 +31,14 @@ class SessionCache:
         fd, tmp_path = tempfile.mkstemp(
             dir=self._cache_dir, prefix=f"pykoplenti-session-{self._cache_file.stem}-."
         )
+        tmp_path = Path(tmp_path)
         try:
             os.write(fd, id.encode("ascii"))
             os.fsync(fd)  # Ensure data is written to disk
             os.close(fd)
 
             # Atomic rename - this also sets permissions correctly
-            self._cache_file.rename(tmp_path)
+            tmp_path.rename(self._cache_file)
         except (OSError, IOError):
             try:
                 os.unlink(tmp_path)
