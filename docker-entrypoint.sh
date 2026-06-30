@@ -13,4 +13,4 @@ if [ -z "$PLENTICORE_HOST" ] || [ -z "$PLENTICORE_PASSWORD" ]; then
 fi
 
 # Run the exporter with proper signal handling for graceful shutdown
-exec python3 "$@"
+exec "$@"
