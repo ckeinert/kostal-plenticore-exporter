@@ -1,41 +1,47 @@
 {
-  "id": null,
-  "uid": "plenticore-dashboard",
-  "title": "Kostal Plenticore Inverter",
-  "tags": [
-    "kostal",
-    "plenticore",
-    "solar",
-    "inverter"
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
   ],
-  "style": "dark",
-  "navigation": {},
-  "time": {
-    "from": "now-24h",
-    "to": "now"
-  },
-  "timepicker": {
-    "refresh_intervals": [
-      "15s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m"
-    ],
-    "time_options": [
-      "now-1h",
-      "now-6h",
-      "now-12h",
-      "now-24h",
-      "now-2d",
-      "now-7d",
-      "now-30d"
-    ]
-  },
-  "templating": {
-    "list": []
-  },
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.4.8"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -50,7 +56,10 @@
     ]
   },
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": null,
+  "links": [],
   "panels": [
     {
       "collapsed": false,
@@ -61,17 +70,18 @@
         "y": 0
       },
       "id": 100,
+      "panels": [],
       "title": "Overview",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -80,7 +90,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -91,37 +102,48 @@
         "y": 1
       },
       "id": 1,
-      "title": "PV Production",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
-        "text": {
-          "locale": null
-        }
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv1{type=\"P} + devices_local_pv2{type=\"P}",
+          "expr": "devices_local_pv1{type=\"P\"} + devices_local_pv2{type=\"P\"}",
           "legendFormat": "PV Total",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "PV Production",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -139,7 +161,7 @@
               }
             ]
           },
-          "decimals": 0
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -150,51 +172,66 @@
         "y": 1
       },
       "id": 2,
-      "title": "Grid Power",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
-        "text": {}
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_powermeter{type=\"P}",
+          "expr": "devices_local_powermeter{type=\"P\"}",
           "legendFormat": "Grid",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Grid Power",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 2000
+              },
+              {
+                "color": "red",
+                "value": 5000
               }
             ]
           },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "red"
-            }
-          }
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -205,13 +242,12 @@
         "y": 1
       },
       "id": 3,
-      "title": "Home Consumption",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -219,28 +255,109 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "- devices_local_powermeter{type=\"P}}",
+          "editorMode": "code",
+          "expr": "devices_local_powermeter{type=\"P\"}",
           "legendFormat": "Home",
+          "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Home Consumption",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "devices_local_battery{type=\"SoC\"}",
+          "legendFormat": "SoC",
+          "refId": "A"
+        }
+      ],
+      "title": "Battery SoC",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -258,7 +375,7 @@
               }
             ]
           },
-          "decimals": 1
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -269,13 +386,12 @@
         "y": 4
       },
       "id": 4,
-      "title": "Autarky Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -283,28 +399,35 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Day\"}",
           "legendFormat": "Autarky",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Autarky Today",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -314,13 +437,7 @@
               }
             ]
           },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "purple"
-            }
-          }
+          "unit": "massg"
         },
         "overrides": []
       },
@@ -331,13 +448,12 @@
         "y": 4
       },
       "id": 5,
-      "title": "CO₂ Saving Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -345,84 +461,94 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day\"}",
           "legendFormat": "CO₂ (g)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "CO₂ Saving Today",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 20
-              },
-              {
-                "color": "green",
-                "value": 50
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "decimals": 1,
-          "min": 0,
-          "max": 100
+          "unit": "watt"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 6,
         "x": 12,
         "y": 4
       },
-      "id": 6,
-      "title": "Battery SoC",
-      "type": "gauge",
+      "id": 801,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "orientation": "auto",
-        "text": {}
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
+          "editorMode": "code",
+          "expr": "devices_local_battery{type=\"P\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_battery{type=\"SoC}",
-          "legendFormat": "SoC",
-          "refId": "A"
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
-      ]
+      ],
+      "title": "Battery Power",
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -430,701 +556,194 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
-      },
-      "id": 200,
-      "title": "Inverter AC Output",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "volt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 11
-      },
-      "id": 7,
-      "title": "AC Voltage (3-Phase)",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L1_U}",
-          "legendFormat": "L1",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L2_U}",
-          "legendFormat": "L2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L3_U}",
-          "legendFormat": "L3",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "amp",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 19
-      },
-      "id": 8,
-      "title": "AC Current (3-Phase)",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L1_I}",
-          "legendFormat": "L1",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L2_I}",
-          "legendFormat": "L2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L3_I}",
-          "legendFormat": "L3",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Active P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#73bf69"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 15
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Reactive Q"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#c4b6e4"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 5
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Apparent S"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#f2c97e"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 5
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 27
-      },
-      "id": 9,
-      "title": "AC Power",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"P}",
-          "legendFormat": "Active P",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"Q}",
-          "legendFormat": "Reactive Q",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"S}",
-          "legendFormat": "Apparent S",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 3,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "CosPhi"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#8ab67c"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Frequency"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#ba43a9"
-              },
-              {
-                "id": "unit",
-                "value": "hertz"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 35
-      },
-      "id": 10,
-      "title": "CosPhi & Frequency",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"CosPhi}",
-          "legendFormat": "CosPhi",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"Frequency}",
-          "legendFormat": "Frequency",
-          "refId": "B"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 35
-      },
-      "id": 11,
-      "title": "Per-Phase Power",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L1_P}",
-          "legendFormat": "L1 P",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L2_P}",
-          "legendFormat": "L2 P",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_ac{type=\"L3_P}",
-          "legendFormat": "L3 P",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 41
+        "y": 7
       },
       "id": 300,
+      "panels": [],
       "title": "PV Strings",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
+              "group": "A",
               "mode": "none"
             },
-            "axisPlacement": "auto"
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 802,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "devices_local_pv1{type=\"P\"}",
+          "legendFormat": "pv1 ",
+          "range": true,
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "devices_local_pv2{type=\"P\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "pv2",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Pv Total",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "pv1 ",
+                "pv2"
+              ],
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           }
         },
         "overrides": [
@@ -1201,11 +820,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 16
       },
       "id": 12,
-      "title": "PV String 1",
-      "type": "timeseries",
       "options": {
         "legend": {
           "calcs": [
@@ -1213,61 +830,105 @@
             "last"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv1{type=\"P}",
+          "editorMode": "code",
+          "expr": "devices_local_pv1{type=\"P\"}",
           "legendFormat": "Power",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv1{type=\"U}",
+          "expr": "devices_local_pv1{type=\"U\"}",
           "legendFormat": "Voltage",
           "refId": "B"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv1{type=\"I}",
+          "expr": "devices_local_pv1{type=\"I\"}",
           "legendFormat": "Current",
           "refId": "C"
         }
-      ]
+      ],
+      "title": "PV String 1",
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
+              "group": "A",
               "mode": "none"
             },
-            "axisPlacement": "auto"
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           }
         },
         "overrides": [
@@ -1344,11 +1005,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 16
       },
       "id": 13,
-      "title": "PV String 2",
-      "type": "timeseries",
       "options": {
         "legend": {
           "calcs": [
@@ -1356,42 +1015,46 @@
             "last"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv2{type=\"P}",
+          "expr": "devices_local_pv2{type=\"P\"}",
           "legendFormat": "Power",
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv2{type=\"U}",
+          "expr": "devices_local_pv2{type=\"U\"}",
           "legendFormat": "Voltage",
           "refId": "B"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_pv2{type=\"I}",
+          "expr": "devices_local_pv2{type=\"I\"}",
           "legendFormat": "Current",
           "refId": "C"
         }
-      ]
+      ],
+      "title": "PV String 2",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -1399,20 +1062,24 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 24
       },
       "id": 400,
+      "panels": [],
       "title": "Battery",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1430,9 +1097,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "min": 0,
-          "max": 100
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -1440,12 +1105,13 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 51
+        "y": 25
       },
       "id": 14,
-      "title": "Battery SoC",
-      "type": "gauge",
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -1455,29 +1121,35 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
-        "orientation": "auto",
+        "sizing": "auto",
         "text": {}
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"SoC}",
+          "expr": "devices_local_battery{type=\"SoC\"}",
           "legendFormat": "SoC",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery SoC",
+      "type": "gauge"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1495,9 +1167,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "min": 0,
-          "max": 100
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -1505,12 +1175,13 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 51
+        "y": 25
       },
       "id": 15,
-      "title": "Battery SoH",
-      "type": "gauge",
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -1520,29 +1191,33 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
-        "orientation": "auto",
+        "sizing": "auto",
         "text": {}
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"SoH}",
+          "expr": "devices_local_battery{type=\"SoH\"}",
           "legendFormat": "SoH",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery SoH",
+      "type": "gauge"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1552,7 +1227,7 @@
               }
             ]
           },
-          "decimals": 0
+          "unit": "none"
         },
         "overrides": []
       },
@@ -1560,16 +1235,15 @@
         "h": 3,
         "w": 8,
         "x": 16,
-        "y": 51
+        "y": 25
       },
       "id": 16,
-      "title": "Battery Cycles",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -1577,28 +1251,35 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"Cycles}",
+          "expr": "devices_local_battery{type=\"Cycles\"}",
           "legendFormat": "Cycles",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery Cycles",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1608,7 +1289,7 @@
               }
             ]
           },
-          "decimals": 0
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -1616,16 +1297,15 @@
         "h": 3,
         "w": 8,
         "x": 16,
-        "y": 54
+        "y": 28
       },
       "id": 17,
-      "title": "Battery Power",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -1633,40 +1313,84 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"P}",
+          "expr": "devices_local_battery{type=\"P\"}",
           "legendFormat": "Battery P",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery Power",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
+              "group": "A",
               "mode": "none"
             },
-            "axisPlacement": "auto"
-          }
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
         },
         "overrides": [
           {
@@ -1734,11 +1458,9 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 31
       },
       "id": 18,
-      "title": "Battery Power & Voltage",
-      "type": "timeseries",
       "options": {
         "legend": {
           "calcs": [
@@ -1746,42 +1468,46 @@
             "last"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"P}",
+          "expr": "devices_local_battery{type=\"P\"}",
           "legendFormat": "Power",
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"U}",
+          "expr": "devices_local_battery{type=\"U\"}",
           "legendFormat": "Voltage",
           "refId": "B"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local_battery{type=\"I}",
+          "expr": "devices_local_battery{type=\"I\"}",
           "legendFormat": "Current",
           "refId": "C"
         }
-      ]
+      ],
+      "title": "Battery Power & Voltage",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -1789,1425 +1515,22 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
-      },
-      "id": 500,
-      "title": "Grid Monitoring",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "volt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 66
-      },
-      "id": 19,
-      "title": "Grid Voltage (3-Phase)",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L1_U}",
-          "legendFormat": "L1",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L2_U}",
-          "legendFormat": "L2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L3_U}",
-          "legendFormat": "L3",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "amp",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 74
-      },
-      "id": 20,
-      "title": "Grid Current (3-Phase)",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L1_I}",
-          "legendFormat": "L1",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L2_I}",
-          "legendFormat": "L2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L3_I}",
-          "legendFormat": "L3",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L1 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L2 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#5794f2"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "L3 P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e5a8e0"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 82
-      },
-      "id": 21,
-      "title": "Grid Power (3-Phase)",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L1_P}",
-          "legendFormat": "L1 P",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L2_P}",
-          "legendFormat": "L2 P",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"L3_P}",
-          "legendFormat": "L3 P",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "wh",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "normal"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Exported"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#73bf69"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Imported"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#e0752d"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 90
-      },
-      "id": 22,
-      "title": "Grid Energy Import/Export",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"Exp_E}",
-          "legendFormat": "Exported",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"Imp_E}",
-          "legendFormat": "Imported",
-          "refId": "B"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "symbol": "none",
-            "symbolSize": 0,
-            "fillOpacity": 10,
-            "stacking": {
-              "mode": "none"
-            },
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Active P"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#73bf69"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Reactive Q"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#c4b6e4"
-              },
-              {
-                "id": "unit",
-                "value": "va"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exact",
-                "names": [
-                  "Apparent S"
-                ]
-              }
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": "#f2c97e"
-              },
-              {
-                "id": "unit",
-                "value": "va"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 90
-      },
-      "id": 23,
-      "title": "Grid Total Power",
-      "type": "timeseries",
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"P}",
-          "legendFormat": "Active P",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"Q}",
-          "legendFormat": "Reactive Q",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "devices_local_powermeter{type=\"S}",
-          "legendFormat": "Apparent S",
-          "refId": "C"
-        }
-      ]
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 98
-      },
-      "id": 600,
-      "title": "Energy Statistics",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 90
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 99
-      },
-      "id": 24,
-      "title": "Autarky Today",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Day}",
-          "legendFormat": "Autarky %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 90
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 99
-      },
-      "id": 25,
-      "title": "Autarky Month",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Month}",
-          "legendFormat": "Autarky %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 90
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
-        "y": 99
-      },
-      "id": 26,
-      "title": "Autarky Year",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Year}",
-          "legendFormat": "Autarky %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 90
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 99
-      },
-      "id": 27,
-      "title": "Autarky Total",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Total}",
-          "legendFormat": "Autarky %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 30
-              },
-              {
-                "color": "green",
-                "value": 60
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 102
-      },
-      "id": 28,
-      "title": "Self-Consumption Today",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Day}",
-          "legendFormat": "Self-Cons. %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 30
-              },
-              {
-                "color": "green",
-                "value": 60
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 102
-      },
-      "id": 29,
-      "title": "Self-Consumption Month",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Month}",
-          "legendFormat": "Self-Cons. %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 30
-              },
-              {
-                "color": "green",
-                "value": 60
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
-        "y": 102
-      },
-      "id": 30,
-      "title": "Self-Consumption Year",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Year}",
-          "legendFormat": "Self-Cons. %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 30
-              },
-              {
-                "color": "green",
-                "value": 60
-              }
-            ]
-          },
-          "decimals": 1
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 102
-      },
-      "id": 31,
-      "title": "Self-Consumption Total",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Total}",
-          "legendFormat": "Self-Cons. %",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "g",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "green"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 105
-      },
-      "id": 32,
-      "title": "CO₂ Saving Today",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day}",
-          "legendFormat": "CO₂ (g)",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "g",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "green"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 105
-      },
-      "id": 33,
-      "title": "CO₂ Saving Month",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Month}",
-          "legendFormat": "CO₂ (g)",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "g",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "green"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
-        "y": 105
-      },
-      "id": 34,
-      "title": "CO₂ Saving Year",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Year}",
-          "legendFormat": "CO₂ (g)",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "g",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "green"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 105
-      },
-      "id": 35,
-      "title": "CO₂ Saving Total",
-      "type": "stat",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {}
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Total}",
-          "legendFormat": "CO₂ (g)",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 108
+        "y": 39
       },
       "id": 700,
+      "panels": [],
       "title": "Energy Flow",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "wh",
+          "decimals": 1,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3217,13 +1540,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "orange"
-            }
-          }
+          "unit": "wh"
         },
         "overrides": []
       },
@@ -3231,16 +1548,15 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 109
+        "y": 40
       },
       "id": 36,
-      "title": "PV Yield Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3248,28 +1564,35 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_Yield_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Yield_Day\"}",
           "legendFormat": "Yield (Wh)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "PV Yield Today",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "wh",
+          "decimals": 1,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3279,13 +1602,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "orange"
-            }
-          }
+          "unit": "wh"
         },
         "overrides": []
       },
@@ -3293,16 +1610,15 @@
         "h": 3,
         "w": 6,
         "x": 6,
-        "y": 109
+        "y": 40
       },
       "id": 37,
-      "title": "Home Energy Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3310,28 +1626,35 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyHome_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyHome_Day\"}",
           "legendFormat": "Home (Wh)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Home Energy Today",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "wh",
+          "decimals": 1,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3341,13 +1664,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "purple"
-            }
-          }
+          "unit": "wh"
         },
         "overrides": []
       },
@@ -3355,16 +1672,15 @@
         "h": 3,
         "w": 6,
         "x": 12,
-        "y": 109
+        "y": 40
       },
       "id": 38,
-      "title": "Battery Charge Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3372,28 +1688,35 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyChargePv_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyChargePv_Day\"}",
           "legendFormat": "Charge PV (Wh)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery Charge Today",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "wh",
+          "decimals": 1,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3403,13 +1726,7 @@
               }
             ]
           },
-          "decimals": 1,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "red"
-            }
-          }
+          "unit": "wh"
         },
         "overrides": []
       },
@@ -3417,16 +1734,15 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 109
+        "y": 40
       },
       "id": 39,
-      "title": "Battery Discharge Today",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3434,19 +1750,25 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyDischarge_Day}",
+          "expr": "scb_statistic_energyflow{type=\"Statistic_EnergyDischarge_Day\"}",
           "legendFormat": "Discharge (Wh)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery Discharge Today",
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -3454,20 +1776,24 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 112
+        "y": 43
       },
-      "id": 800,
-      "title": "System Status",
+      "id": 600,
+      "panels": [],
+      "title": "Energy Statistics",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3477,14 +1803,2528 @@
               },
               {
                 "color": "yellow",
-                "value": 4
+                "value": 50
               },
               {
                 "color": "green",
-                "value": 6
+                "value": 90
               }
             ]
           },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 44
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Day\"}",
+          "legendFormat": "Autarky %",
+          "refId": "A"
+        }
+      ],
+      "title": "Autarky Today",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 44
+      },
+      "id": 25,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Month\"}",
+          "legendFormat": "Autarky %",
+          "refId": "A"
+        }
+      ],
+      "title": "Autarky Month",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 44
+      },
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Year\"}",
+          "legendFormat": "Autarky %",
+          "refId": "A"
+        }
+      ],
+      "title": "Autarky Year",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 44
+      },
+      "id": 27,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_Autarky_Total\"}",
+          "legendFormat": "Autarky %",
+          "refId": "A"
+        }
+      ],
+      "title": "Autarky Total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 47
+      },
+      "id": 28,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Day\"}",
+          "legendFormat": "Self-Cons. %",
+          "refId": "A"
+        }
+      ],
+      "title": "Self-Consumption Today",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 47
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Month\"}",
+          "legendFormat": "Self-Cons. %",
+          "refId": "A"
+        }
+      ],
+      "title": "Self-Consumption Month",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 47
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Year\"}",
+          "legendFormat": "Self-Cons. %",
+          "refId": "A"
+        }
+      ],
+      "title": "Self-Consumption Year",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 47
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_OwnConsumptionRate_Total\"}",
+          "legendFormat": "Self-Cons. %",
+          "refId": "A"
+        }
+      ],
+      "title": "Self-Consumption Total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "massg"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 50
+      },
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Day\"}",
+          "legendFormat": "CO₂ (g)",
+          "refId": "A"
+        }
+      ],
+      "title": "CO₂ Saving Today",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "massg"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 50
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Month\"}",
+          "legendFormat": "CO₂ (g)",
+          "refId": "A"
+        }
+      ],
+      "title": "CO₂ Saving Month",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "massg"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 50
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Year\"}",
+          "legendFormat": "CO₂ (g)",
+          "refId": "A"
+        }
+      ],
+      "title": "CO₂ Saving Year",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "massg"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 50
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "scb_statistic_energyflow{type=\"Statistic_CO2Saving_Total\"}",
+          "legendFormat": "CO₂ (g)",
+          "refId": "A"
+        }
+      ],
+      "title": "CO₂ Saving Total",
+      "type": "stat"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 500,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "volt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 54
+          },
+          "id": 19,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L1_U\"}",
+              "legendFormat": "L1",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L2_U\"}",
+              "legendFormat": "L2",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L3_U\"}",
+              "legendFormat": "L3",
+              "refId": "C"
+            }
+          ],
+          "title": "Grid Voltage (3-Phase)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "amp"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 69
+          },
+          "id": 20,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L1_I\"}",
+              "legendFormat": "L1",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L2_I\"}",
+              "legendFormat": "L2",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L3_I\"}",
+              "legendFormat": "L3",
+              "refId": "C"
+            }
+          ],
+          "title": "Grid Current (3-Phase)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 77
+          },
+          "id": 21,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L1_P\"}",
+              "legendFormat": "L1 P",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L2_P\"}",
+              "legendFormat": "L2 P",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"L3_P\"}",
+              "legendFormat": "L3 P",
+              "refId": "C"
+            }
+          ],
+          "title": "Grid Power (3-Phase)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "wh"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Exported"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#73bf69"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Imported"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 85
+          },
+          "id": 22,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"Exp_E\"}",
+              "legendFormat": "Exported",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"Imp_E\"}",
+              "legendFormat": "Imported",
+              "refId": "B"
+            }
+          ],
+          "title": "Grid Energy Import/Export",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Active P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#73bf69"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Reactive Q"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#c4b6e4"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "va"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Apparent S"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#f2c97e"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "va"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 85
+          },
+          "id": 23,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"P\"}",
+              "legendFormat": "Active P",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"Q\"}",
+              "legendFormat": "Reactive Q",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_powermeter{type=\"S\"}",
+              "legendFormat": "Apparent S",
+              "refId": "C"
+            }
+          ],
+          "title": "Grid Total Power",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Grid Monitoring",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 200,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "volt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 55
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L1_U\"}",
+              "legendFormat": "L1",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L2_U\"}",
+              "legendFormat": "L2",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L3_U\"}",
+              "legendFormat": "L3",
+              "refId": "C"
+            }
+          ],
+          "title": "AC Voltage (3-Phase)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "amp"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 70
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L1_I\"}",
+              "legendFormat": "L1",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L2_I\"}",
+              "legendFormat": "L2",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L3_I\"}",
+              "legendFormat": "L3",
+              "refId": "C"
+            }
+          ],
+          "title": "AC Current (3-Phase)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Active P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#73bf69"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 15
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Reactive Q"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#c4b6e4"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 5
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Apparent S"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#f2c97e"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 78
+          },
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"P\"}",
+              "legendFormat": "Active P",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"Q\"}",
+              "legendFormat": "Reactive Q",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"S\"}",
+              "legendFormat": "Apparent S",
+              "refId": "C"
+            }
+          ],
+          "title": "AC Power",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 3,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "CosPhi"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#8ab67c"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "Frequency"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#ba43a9"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "hertz"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 0,
+            "y": 86
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"CosPhi\"}",
+              "legendFormat": "CosPhi",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"Frequency\"}",
+              "legendFormat": "Frequency",
+              "refId": "B"
+            }
+          ],
+          "title": "CosPhi & Frequency",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L1 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e0752d"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L2 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#5794f2"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exact",
+                    "names": [
+                      "L3 P"
+                    ]
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": "#e5a8e0"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 12,
+            "y": 86
+          },
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L1_P\"}",
+              "legendFormat": "L1 P",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L2_P\"}",
+              "legendFormat": "L2 P",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "expr": "devices_local_ac{type=\"L3_P\"}",
+              "legendFormat": "L3 P",
+              "refId": "C"
+            }
+          ],
+          "title": "Per-Phase Power",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Inverter AC Output",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 800,
+      "panels": [],
+      "title": "System Status",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
           "mappings": [
             {
               "options": {
@@ -3581,7 +4421,25 @@
               },
               "type": "value"
             }
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 4
+              },
+              {
+                "color": "green",
+                "value": 6
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -3589,16 +4447,15 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 113
+        "y": 56
       },
       "id": 40,
-      "title": "Inverter State",
-      "type": "stat",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3606,40 +4463,36 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {
           "titleSize": 14,
           "valueSize": 20
-        }
+        },
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local{type=\"Inverter_State}",
+          "expr": "devices_local{type=\"Inverter_State\"}",
           "legendFormat": "State",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Inverter State",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
           "mappings": [
             {
               "options": {
@@ -3666,7 +4519,17 @@
               },
               "type": "value"
             }
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -3674,16 +4537,15 @@
         "h": 4,
         "w": 6,
         "x": 6,
-        "y": 113
+        "y": 56
       },
       "id": 41,
-      "title": "Battery Status",
-      "type": "stat",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3691,31 +4553,38 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {
           "titleSize": 14,
           "valueSize": 20
-        }
+        },
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local{type=\"EM_State}",
+          "expr": "devices_local{type=\"EM_State\"}",
           "legendFormat": "Status",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Battery Status",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "ohm",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3733,7 +4602,7 @@
               }
             ]
           },
-          "decimals": 0
+          "unit": "ohm"
         },
         "overrides": []
       },
@@ -3741,16 +4610,15 @@
         "h": 4,
         "w": 6,
         "x": 12,
-        "y": 113
+        "y": 56
       },
       "id": 42,
-      "title": "Isolation Resistance",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3758,46 +4626,38 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local{type=\"Iso_R}",
+          "expr": "devices_local{type=\"Iso_R\"}",
           "legendFormat": "Iso R (Ω)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Isolation Resistance",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
           "mappings": [
             {
               "options": {
                 "0": {
-                  "color": "red",
+                  "color": "green",
                   "index": 0,
                   "text": "No Events"
                 },
@@ -3809,7 +4669,21 @@
               },
               "type": "value"
             }
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -3817,16 +4691,15 @@
         "h": 4,
         "w": 6,
         "x": 18,
-        "y": 113
+        "y": 56
       },
       "id": 43,
-      "title": "Active Errors",
-      "type": "stat",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3834,31 +4707,38 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {
           "titleSize": 14,
           "valueSize": 20
-        }
+        },
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_event{type=\"Event_ActiveErrorCnt}",
+          "expr": "scb_event{type=\"Event_ActiveErrorCnt\"}",
           "legendFormat": "Errors",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Active Errors",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "decimals": 0,
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3868,13 +4748,7 @@
               }
             ]
           },
-          "decimals": 0,
-          "custom": {
-            "altColors": {
-              "lowest": "#162138",
-              "highest": "blue"
-            }
-          }
+          "unit": "s"
         },
         "overrides": []
       },
@@ -3882,16 +4756,15 @@
         "h": 3,
         "w": 12,
         "x": 0,
-        "y": 117
+        "y": 60
       },
       "id": 44,
-      "title": "Inverter Work Time",
-      "type": "stat",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3899,41 +4772,33 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "devices_local{type=\"WorkTime}",
+          "expr": "devices_local{type=\"WorkTime\"}",
           "legendFormat": "Work Time (s)",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Inverter Work Time",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
           "mappings": [
             {
               "options": {
@@ -3950,7 +4815,21 @@
               },
               "type": "value"
             }
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -3958,16 +4837,15 @@
         "h": 3,
         "w": 6,
         "x": 12,
-        "y": 117
+        "y": 60
       },
       "id": 45,
-      "title": "Portal Connection",
-      "type": "stat",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -3975,41 +4853,33 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_export{type=\"PortalConActive}",
+          "expr": "scb_export{type=\"PortalConActive\"}",
           "legendFormat": "Portal",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Portal Connection",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
           "mappings": [
             {
               "options": {
@@ -4026,7 +4896,21 @@
               },
               "type": "value"
             }
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -4034,16 +4918,15 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 117
+        "y": 60
       },
       "id": 46,
-      "title": "FTP Connection",
-      "type": "stat",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -4051,24 +4934,55 @@
           "fields": "",
           "values": false
         },
-        "text": {}
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "11.4.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "scb_export{type=\"FtpConActive}",
+          "expr": "scb_export{type=\"FtpConActive\"}",
           "legendFormat": "FTP",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "FTP Connection",
+      "type": "stat"
     }
   ],
-  "schemaVersion": 36,
-  "version": 1,
-  "refresh": "5m",
-  "links": [],
-  "preload": false
+  "refresh": "30s",
+  "schemaVersion": 40,
+  "tags": [
+    "kostal",
+    "plenticore",
+    "solar",
+    "inverter"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "15s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m"
+    ]
+  },
+  "timezone": "",
+  "title": "Kostal Plenticore Inverter",
+  "uid": "plenticore-dashboard-7",
+  "version": 6,
+  "weekStart": ""
 }
