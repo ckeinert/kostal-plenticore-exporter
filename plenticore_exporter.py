@@ -193,7 +193,7 @@ async def update_metrics(host, port, key, service_code):
 
                 gauges.get_or_create(
                     metric_name, f"SCB metric {metric_base}", ["type"]
-                ).labels([label_value]).set(value)
+                ).labels(label_value).set(value)
                 logger.info(f"{metric_name}{{type={label_value}}} = {value}")
         except Exception as e:
             logger.error(f"Error updating metrics: {e}")
