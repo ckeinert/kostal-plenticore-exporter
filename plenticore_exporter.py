@@ -5,9 +5,10 @@ import sys
 import os
 import math
 import logging
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp import web
 from pykoplenti import ApiClient
+from pykoplenti.api import NotAuthorizedException
 from typing import Optional, Any, Callable, Awaitable, Dict
 from session_cache import SessionCache
 from collections import defaultdict
@@ -92,12 +93,25 @@ async def command_main(
     service_code: Optional[str],
     fn: Callable[[ApiClient], Awaitable[Dict[str, float]]],
 ) -> Dict[str, float]:
-    async with ClientSession(timeout=ClientTimeout(total=10)) as session:
+    connector = TCPConnector(ssl=False)
+    async with ClientSession(timeout=ClientTimeout(total=10), connector=connector) as session:
         client = ApiClient(session, host=host, port=port)
         session_cache = SessionCache(host, "user" if service_code is None else "master")
         client.session_id = session_cache.read_session_id()
 
-        me = await client.get_me()
+        try:
+            me = await client.get_me()
+        except NotAuthorizedException:
+            logger.info("Cached session expired, clearing and re-authenticating...")
+            session_cache.remove()
+            client.session_id = None
+            if key is None:
+                raise ValueError("Could not reuse session and no login key is given.")
+            await client.login(key=key, service_code=service_code)
+            if client.session_id:
+                session_cache.write_session_id(client.session_id)
+            me = await client.get_me()
+
         if not me.is_authenticated:
             if key is None:
                 raise ValueError("Could not reuse session and no login key is given.")
@@ -201,7 +215,7 @@ async def update_metrics(host, port, key, service_code):
             pass
 
 
-async def main(host=None, port=None, key=None, service_code=None):
+async def main(host=None, port=None, key=None, service_code=None, inverter_port=None):
     host = host or os.getenv("PLENTICORE_HOST")
     if not host:
         logger.error("PLENTICORE_HOST must be set or provided as argument!")
@@ -212,6 +226,8 @@ async def main(host=None, port=None, key=None, service_code=None):
     if not key:
         logger.error("PLENTICORE_PASSWORD must be set or provided as argument!")
         sys.exit(1)
+
+    inverter_port = inverter_port or int(os.getenv("PLENTICORE_API_PORT", 80))
 
     logger.info(f"Exporter running on :{port}")
 
@@ -227,7 +243,7 @@ async def main(host=None, port=None, key=None, service_code=None):
     await site.start()
 
     logger.info("Exporter serving requests")
-    asyncio.create_task(update_metrics(host, 443, key, service_code))
+    asyncio.create_task(update_metrics(host, inverter_port, key, service_code))
     await shutdown_event.wait()
 
 
@@ -251,6 +267,10 @@ def parse_args():
         help="HTTP port for metrics endpoint (default: 8080)"
     )
     parser.add_argument(
+        "--api-port", "-a", type=int, default=80,
+        help="Inverter API port (default: 80)"
+    )
+    parser.add_argument(
         "--key", "-k", type=str, default=None,
         help="Login key for authentication"
     )
@@ -267,7 +287,7 @@ if __name__ == "__main__":
 
     try:
         asyncio.run(
-            main(args.host, args.port, args.key, args.service_code)
+            main(args.host, args.port, args.key, args.service_code, args.api_port)
         )
     except KeyboardInterrupt:
         logger.info("Received interrupt signal, shutting down...")

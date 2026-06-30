@@ -43,6 +43,7 @@ from plenticore_exporter import (
     main as exporter_main,
     shutdown_event,
 )
+from session_cache import SessionCache
 
 
 def test_decode_inverter_status():
@@ -120,33 +121,43 @@ async def test_connection_and_auth():
 
     host = os.getenv("PLENTICORE_HOST", "192.168.178.72")
     password = os.getenv("PLENTICORE_PASSWORD")
+    api_port = int(os.getenv("PLENTICORE_API_PORT", 80))
 
     if not password:
         print("  ✗ Skipped: PLENTICORE_PASSWORD not set (create .env file)")
         return False
 
-    print(f"  Connecting to {host}...")
+    print(f"  Connecting to {host}:{api_port}...")
 
-    from aiohttp import ClientSession, ClientTimeout
+    from aiohttp import ClientSession, ClientTimeout, TCPConnector
     from pykoplenti import ApiClient
+    from pykoplenti.api import NotAuthorizedException
     from session_cache import SessionCache
 
     try:
-        async with ClientSession(timeout=ClientTimeout(total=10)) as session:
-            client = ApiClient(session, host=host)
+        connector = TCPConnector(ssl=False)
+        async with ClientSession(timeout=ClientTimeout(total=10), connector=connector) as session:
+            client = ApiClient(session, host=host, port=api_port)
             session_cache = SessionCache(host, "user")
             client.session_id = session_cache.read_session_id()
 
-            me = await client.get_me()
-            print(f"    User info: {me}")  # Debug output
+            try:
+                me = await client.get_me()
+            except NotAuthorizedException:
+                print("    Cached session expired, clearing and re-authenticating...")
+                session_cache.remove()
+                client.session_id = None
+                me = None
 
-            if not me.is_authenticated:
+            if me is None or not me.is_authenticated:
                 print("  Authenticating...")
                 await client.login(key=password)
                 assert client.session_id, "Login failed - no session ID returned"
                 session_cache.write_session_id(client.session_id)
                 print(f"    Session saved to cache")
+                me = await client.get_me()
 
+            print(f"    User info: {me}")  # Debug output
             assert me.is_authenticated, "Authentication check failed"
             print("  ✓ Connection and authentication successful")
             return True
@@ -163,6 +174,7 @@ async def test_fetch_process_data():
 
     host = os.getenv("PLENTICORE_HOST", "192.168.178.72")
     password = os.getenv("PLENTICORE_PASSWORD")
+    api_port = int(os.getenv("PLENTICORE_API_PORT", 80))
 
     if not password:
         print("  ✗ Skipped: PLENTICORE_PASSWORD not set (create .env file)")
@@ -171,7 +183,7 @@ async def test_fetch_process_data():
     from plenticore_exporter import fetch_all_values
 
     try:
-        data = await fetch_all_values(host, 443, password, None)
+        data = await fetch_all_values(host, api_port, password, None)
         print(f"    Retrieved {len(data)} metrics")
 
         # Verify we got some actual data (not just empty dict)
@@ -289,9 +301,11 @@ async def test_graceful_shutdown():
     except ConnectionRefusedError:
         sock.close()
 
+    api_port = int(os.getenv("PLENTICORE_API_PORT", 80))
+
     # Create a task with timeout to simulate shutdown
     async def run_with_timeout():
-        await asyncio.wait_for(exporter_main(), timeout=3)
+        await asyncio.wait_for(exporter_main(inverter_port=api_port), timeout=3)
 
     try:
         task = asyncio.create_task(run_with_timeout())
@@ -358,6 +372,11 @@ async def main_test():
 
     # Integration tests (require network)
     connected = False
+    api_port = int(os.getenv("PLENTICORE_API_PORT", 80))
+    if password:
+        host = os.getenv("PLENTICORE_HOST", "192.168.178.72")
+        # Clear stale session cache before tests
+        SessionCache(host, "user").remove()
     if password:
         try:
             connected = await test_connection_and_auth()
@@ -378,7 +397,7 @@ async def main_test():
     if password:
         print("\nStarting exporter server for endpoint tests...")
 
-        server_task = asyncio.create_task(exporter_main())
+        server_task = asyncio.create_task(exporter_main(inverter_port=api_port))
         await asyncio.sleep(2)  # Wait for server to start and collect first metrics
         print("  Exporter server started")
 
