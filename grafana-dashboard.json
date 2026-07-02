@@ -268,7 +268,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "devices_local_powermeter{type=\"P\"}",
+          "expr": "devices_local{type=\"Home_P\"}",
           "legendFormat": "Home",
           "range": true,
           "refId": "A"
@@ -633,7 +633,9 @@
       "id": 802,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -648,7 +650,7 @@
         {
           "editorMode": "code",
           "expr": "devices_local_pv1{type=\"P\"}",
-          "legendFormat": "pv1 ",
+          "legendFormat": "String1",
           "range": true,
           "refId": "A",
           "datasource": {
@@ -665,12 +667,12 @@
           "expr": "devices_local_pv2{type=\"P\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "pv2",
+          "legendFormat": "String2",
           "range": true,
           "refId": "D"
         }
       ],
-      "title": "Pv Total",
+      "title": "PV Total",
       "transformations": [
         {
           "id": "calculateField",
@@ -678,8 +680,8 @@
             "mode": "reduceRow",
             "reduce": {
               "include": [
-                "pv1 ",
-                "pv2"
+                "String1",
+                "String2"
               ],
               "reducer": "sum"
             }
@@ -1451,6 +1453,22 @@
                 "value": "amp"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Charge"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
           }
         ]
       },
@@ -1464,7 +1482,6 @@
       "options": {
         "legend": {
           "calcs": [
-            "mean",
             "last"
           ],
           "displayMode": "list",
@@ -1504,9 +1521,22 @@
           "expr": "devices_local_battery{type=\"I\"}",
           "legendFormat": "Current",
           "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "devices_local_battery{type=\"SoC\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Charge",
+          "range": true,
+          "refId": "D"
         }
       ],
-      "title": "Battery Power & Voltage",
+      "title": "Battery Power, Voltage & Charge",
       "type": "timeseries"
     },
     {
@@ -4983,6 +5013,6 @@
   "timezone": "",
   "title": "Kostal Plenticore Inverter",
   "uid": "plenticore-dashboard-7",
-  "version": 6,
+  "version": 8,
   "weekStart": ""
 }
